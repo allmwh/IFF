@@ -12,7 +12,8 @@ openpyxl
 plotly
 tqdm
 joblib
-sklearn
+scikit-learn
+scipy
 comet-ml
 webdriver-manager
 jellyfish
