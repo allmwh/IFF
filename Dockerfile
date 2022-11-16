@@ -18,7 +18,8 @@ RUN apt-get update && \
     apt-get install -y git wget clustalo
 
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get install -y ./google-chrome-stable_current_amd64.deb
+    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
+    rm -rf google-chrome-stable_current_amd64.deb
 
 RUN pip install --no-cache --upgrade pip && \
     pip install --no-cache notebook jupyterlab && \
