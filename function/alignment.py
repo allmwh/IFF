@@ -9,6 +9,7 @@ class Alignment():
     plese install ClustalOmega: http://www.clustal.org/omega/
     Ubuntu/Debian based linux distro: sudo apt install clustalo
     """
+
     def __init__(self):
         pass
 
@@ -25,9 +26,13 @@ class Alignment():
         output_fasta = Path(output_fasta)
 
         try:
-            clustalomega_cline = ClustalOmegaCommandline(infile=input_fasta, outfile=output_fasta, verbose=True, auto=True, force=True)
+            clustalomega_cline = ClustalOmegaCommandline(infile=input_fasta,
+                                                         outfile=output_fasta,
+                                                         verbose=True,
+                                                         auto=True,
+                                                         force=True)
             clustalomega_cline()
-            #remove before alied file for running rusume good
+            # remove input file if successfully alignment
             if delete:
                 input_fasta.unlink()
 
@@ -36,7 +41,7 @@ class Alignment():
 
     def alignment_path(self, input_path, output_path, delete=False):
         '''
-        align all file under input_path, and save alied fasta to output_path
+        alignment all file under input_path, and save alignment fasta to output_path
 
         input_path: str, path saving many fasta to be alied 
         output_path: str, path for alied fsta output
@@ -63,7 +68,7 @@ class Alignment():
 
             try:
                 self.alignment_single(input_fasta, output_fasta, delete=delete)
-            except Exception as e: 
+            except Exception as e:
                 print(e)
                 failed_list.append(fasta_path)
 

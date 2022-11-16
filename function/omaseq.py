@@ -9,6 +9,7 @@ from Bio.SeqRecord import SeqRecord
 
 from function.utilities import fasta_to_seqlist
 
+
 class FetchOmaSeqBatch():
     '''
     get homologs by OMA Group from OMA to fasta, e.g.
@@ -52,13 +53,15 @@ class FetchOmaSeqBatch():
         '''
 
         try:
-            url = "https://omabrowser.org/oma/omagroup/{}/fasta/".format(oma_group_id)
+            url = "https://omabrowser.org/oma/omagroup/{}/fasta/".format(
+                oma_group_id)
             resp = requests.get(url)
             resp.raise_for_status()
             with open(fasta_path, "w") as file:
                 file.write(resp.text)
         except:
-            raise Exception("{} get fasta failed from OMA".format(oma_group_id))
+            raise Exception(
+                "{} get fasta failed from OMA".format(oma_group_id))
 
     def __get_fasta_info(self, oma_group_id):
         '''
@@ -78,11 +81,11 @@ class FetchOmaSeqBatch():
             for i in oma_raw['members']:
 
                 species = i["species"]["species"]
-                
+
                 #sometimes species name are too long, remove some infos like strain
-                species = re.sub("\(.*\)", "", species) 
+                species = re.sub("\(.*\)", "", species)
                 oma_id = i["omaid"]
-                
+
                 canonical_id = i["canonicalid"]
                 taxon_id = i["species"]["taxon_id"]
 
@@ -97,7 +100,8 @@ class FetchOmaSeqBatch():
         except:
             raise Exception("{} OMA fetch fasta seqeuence info failed".format(oma_group_id))
 
-    def __mod_fasta_info(self, oma_fasta_path, mod_fasta_path, fasta_info_dict):
+    def __mod_fasta_info(self, oma_fasta_path, mod_fasta_path,
+                         fasta_info_dict):
         '''
         change sequence name's format
 
@@ -114,12 +118,10 @@ class FetchOmaSeqBatch():
             id = seq_record.id
             record = SeqRecord(seq=seq_record.seq,
                                id=id,
-                               description="| {} | {} | {}".format(fasta_info_dict[id]["species"],
-                                                                   fasta_info_dict[id]["taxon_id"],
-                                                                   fasta_info_dict[id]["canonical_id"])
-                            )
+                               description="| {} | {} | {}".format(fasta_info_dict[id]["species"], fasta_info_dict[id]["taxon_id"], fasta_info_dict[id]["canonical_id"]))
             mod_fasta_list.append(record)
         SeqIO.write(mod_fasta_list, mod_fasta_path, "fasta")
+
 
 class TaxSeqFilter():
     '''

@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class CutPONDR():
+
     def __init__(self, show_progress_window=False):
         """
         automatically sends sequences to pondr.com, and get order/disrder info
@@ -18,7 +19,8 @@ class CutPONDR():
             options.add_argument("--headless")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(),
+                                       chrome_options=options)
 
     def close(self):
         return self.driver.close()
@@ -45,17 +47,17 @@ class CutPONDR():
 
         # define bottom control
         # algorithm
-        self.VLXT = self.driver.find_element(By.NAME,"VLXT")
-        self.XL1_XT = self.driver.find_element(By.NAME,"XL1")
-        self.CAN_XT = self.driver.find_element(By.NAME,"CAN")
-        self.VL3_BA = self.driver.find_element(By.NAME,"VL3")
-        self.VSL2 = self.driver.find_element(By.NAME,"VSL2")
+        self.VLXT = self.driver.find_element(By.NAME, "VLXT")
+        self.XL1_XT = self.driver.find_element(By.NAME, "XL1")
+        self.CAN_XT = self.driver.find_element(By.NAME, "CAN")
+        self.VL3_BA = self.driver.find_element(By.NAME, "VL3")
+        self.VSL2 = self.driver.find_element(By.NAME, "VSL2")
 
         # output
-        self.gra = self.driver.find_element(By.NAME,"graphic")
-        self.stat = self.driver.find_element(By.NAME,"stats")
-        self.report = self.driver.find_element(By.NAME,"seq")
-        self.rawoutput = self.driver.find_element(By.NAME,"wcwraw")
+        self.gra = self.driver.find_element(By.NAME, "graphic")
+        self.stat = self.driver.find_element(By.NAME, "stats")
+        self.report = self.driver.find_element(By.NAME, "seq")
+        self.rawoutput = self.driver.find_element(By.NAME, "wcwraw")
 
         # switcher
         switcher = {
@@ -76,33 +78,32 @@ class CutPONDR():
         switcher[self.algorithm]()
 
         # fill protein name
-        name = self.driver.find_element(By.NAME,"ProteinName")
+        name = self.driver.find_element(By.NAME, "ProteinName")
         name.clear()
         name.send_keys(self.protein_name)
 
         # fill sequence
-        seqform = self.driver.find_element(By.NAME,"Sequence")
+        seqform = self.driver.find_element(By.NAME, "Sequence")
         seqform.clear()
         seqform.send_keys(self.sequence)
 
         # submit
-        self.submit = self.driver.find_element(By.NAME,"submit_result")
+        self.submit = self.driver.find_element(By.NAME, "submit_result")
         self.submit.click()
 
         # wait until loaded
         UI.WebDriverWait(self.driver, 2).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/center/h2/img"))
-        )
+            EC.presence_of_element_located(
+                (By.XPATH, "/html/body/center/h2/img")))
 
         # raw output
         # result analysis
-        result = self.driver.find_element(By.XPATH,"/html/body/pre[6]")
+        result = self.driver.find_element(By.XPATH, "/html/body/pre[6]")
         result = result.text
         self.result = result
         df = pd.DataFrame(result.split("\n"))
-        df = pd.DataFrame(
-            df[0].str.split(pat=" ", n=2).tolist(), columns=["Num", "Res", "algorithm"]
-        )
+        df = pd.DataFrame(df[0].str.split(pat=" ", n=2).tolist(),
+                          columns=["Num", "Res", "algorithm"])
         df = df.drop(0)
 
         # make sequence_mask
