@@ -1,6 +1,8 @@
 import requests
 import json
 
+class ProteinNotFound(Exception):
+    pass
 
 class EbiAPI():
     '''
@@ -13,8 +15,12 @@ class EbiAPI():
         #get protein info from ebi
         requestURL = "https://www.ebi.ac.uk/proteins/api/proteins/{}".format(
             uniprot_id)
-        r = requests.get(requestURL, headers={"Accept": "application/json"})
-        r.raise_for_status()
+        
+        try:
+            r = requests.get(requestURL, headers={"Accept": "application/json"})
+            r.raise_for_status()
+        except:
+            raise ProteinNotFound("Please check Uniprot Entry ID")
 
         #to json
         r = json.loads(r.text)
