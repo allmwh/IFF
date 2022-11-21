@@ -1,3 +1,3 @@
 # IFF
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/allmwh/IFF/HEAD)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/allmwh/IFF/HEAD?urlpath=lab/tree/feature_vis_on_binder.ipynb)
