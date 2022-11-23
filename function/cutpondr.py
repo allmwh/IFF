@@ -10,9 +10,9 @@ class CutPONDR():
 
     def __init__(self, show_progress_window=False):
         """
-        automatically sends sequences to pondr.com, and get order/disrder info
+        automatically send sequences to pondr.com, and get order/disrder region infomation
 
-        show_progress_window: show chrome during sequence identification by PONDR
+        show_progress_window: show process during PONDR's web crawler
         """
         options = webdriver.ChromeOptions()
         if not show_progress_window:
@@ -161,7 +161,7 @@ class CutPONDR():
 
     def get_od_ident(self):
         """
-        same as get_sequence_mask, instead different symbols of order/disorder
+        same as get_sequence_mask(), but with different order/disorder symbols
         "0": order
         "1": disorder
 

@@ -5,7 +5,7 @@ from Bio.Align.Applications import ClustalOmegaCommandline
 
 class Alignment():
     """
-    alignment by Biopython ClustalOmegaCommandline
+    make sequence alignment by Biopython ClustalOmegaCommandline
     plese install ClustalOmega: http://www.clustal.org/omega/
     Ubuntu/Debian based linux distro: sudo apt install clustalo
     """
@@ -17,8 +17,8 @@ class Alignment():
         '''
         fasta alignment
 
-        input_fasta: str, fasta file for alignment
-        output_fasta: str, fasta file for alied fasta
+        input_fasta: str, fasta file for sequence alignment
+        output_fasta: str, fasta file for output alignment
 
         return: None
         '''
@@ -32,7 +32,7 @@ class Alignment():
                                                          auto=True,
                                                          force=True)
             clustalomega_cline()
-            # remove input file if successfully alignment
+            # delete the input file if the alignment is successful
             if delete:
                 input_fasta.unlink()
 
@@ -43,8 +43,8 @@ class Alignment():
         '''
         alignment all file under input_path, and save alignment fasta to output_path
 
-        input_path: str, path saving many fasta to be alied 
-        output_path: str, path for alied fsta output
+        input_path: str, folder containing fasta files for sequence alignment
+        output_path: str, folder containing fasta files for output alignment
 
         return: None
         '''

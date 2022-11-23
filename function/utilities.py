@@ -6,7 +6,7 @@ from Bio.Seq import Seq
 
 def seq_aa_check(sequence):
     '''
-    check 20 amino acid abbreviations are usual used and delete unvalied letter 
+    check 20 amino acid abbreviations are usual used and delete illegal letter 
     ref: https://www.ncbi.nlm.nih.gov/Class/MLACourse/Modules/MolBioReview/iupac_aa_abbreviations.html
     
     sequence: str, seqeunce

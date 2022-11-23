@@ -6,13 +6,13 @@ class ProteinNotFound(Exception):
 
 class EbiAPI():
     '''
-    commute with ebi's api
+    communicate with EBI's API to get sequence infomations
     https://www.ebi.ac.uk/proteins/api/doc/index.html
     '''
 
     def __init__(self, uniprot_id):
 
-        #get protein info from ebi
+        # get protein info from EBI
         requestURL = "https://www.ebi.ac.uk/proteins/api/proteins/{}".format(
             uniprot_id)
         
@@ -22,10 +22,10 @@ class EbiAPI():
         except:
             raise ProteinNotFound("Please check Uniprot Entry ID")
 
-        #to json
+        # to json
         r = json.loads(r.text)
 
-        #get some info for further use
+        # get more information for further use
         self.json_raw = r
         self.uniprot_id = r['accession']
         self.protein_sequence = r['sequence']['sequence']

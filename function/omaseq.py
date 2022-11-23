@@ -12,9 +12,9 @@ from function.utilities import fasta_to_seqlist
 
 class FetchOmaSeqBatch():
     '''
-    get homologs by OMA Group from OMA to fasta, e.g.
-    1. get OMA Group fasta from https://omabrowser.org/oma/omagroup/859990/fasta/ 
-    2. change sequence name's format, infos are from https://omabrowser.org/api/group/859990/ 
+    get homologs by OMA Group ID from OMA, e.g.
+    1. get OMA Group from https://omabrowser.org/oma/omagroup/859990/fasta/, and save to fasta file
+    2. change sequence name's format for all sequences in a fasta, sequence infomations are from https://omabrowser.org/api/group/859990/ 
     '''
 
     def __init__(self):
@@ -22,7 +22,7 @@ class FetchOmaSeqBatch():
 
     def get_oma_seq(self, oma_group_id, path):
         '''
-        pipeline: get fasta from OMA, changing sequence name's format
+        pipeline: get fasta from OMA, and change the format of sequence name
 
         oma_group_id: str, OMA Group id, e.g. 859990
         path: str, path for saving fasta
@@ -44,7 +44,7 @@ class FetchOmaSeqBatch():
 
     def __get_oma_fasta(self, oma_group_id, fasta_path):
         '''
-        get OMA Group to fasta file
+        get homolog by OMA Group ID to a fasta file
 
         oma_group_id: str, OMA Group id, e.g. 859990
         fasta_path: str, path for saving fasta
@@ -60,12 +60,11 @@ class FetchOmaSeqBatch():
             with open(fasta_path, "w") as file:
                 file.write(resp.text)
         except:
-            raise Exception(
-                "{} get fasta failed from OMA".format(oma_group_id))
+            raise Exception("{} get fasta failed from OMA".format(oma_group_id))
 
     def __get_fasta_info(self, oma_group_id):
         '''
-        get sequence infos for each sequence in OMA Group
+        get sequence infomations for each sequence in OMA Group
 
         oma_group_id: str, OMA Group id, e.g. 859990
 
@@ -82,7 +81,7 @@ class FetchOmaSeqBatch():
 
                 species = i["species"]["species"]
 
-                #sometimes species name are too long, remove some infos like strain
+                # sometimes specie name is too long, remove some infomation like strain
                 species = re.sub("\(.*\)", "", species)
                 oma_id = i["omaid"]
 

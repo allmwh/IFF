@@ -10,7 +10,7 @@ class SeqFilter():
     '''
     some od_ident (derived from PONDR) postprocessing functions 
 
-    symbols used in od_ident：
+    symbols ared used in od_ident：
         1: disorder identified by PONDR
         0: order identified by PONDR
 
@@ -31,7 +31,7 @@ class SeqFilter():
 
         return: od_ident, str
         '''
-        #filter_length
+        # filter_length
         disorder_check = re.finditer("1+", od_ident)
         for i in disorder_check:
             if i:
@@ -55,7 +55,7 @@ class SeqFilter():
     def get_seq_from_od_ident(self, od_ident, sequence, od):
         '''
         get order/disorder masked protein sequence from od_ident 
-        the lengths of od_ident and sequence must be same
+        the lengths of od_ident and sequence must be the same
         
         od_ident: str
         sequence: str, protein seqeunce 
@@ -63,7 +63,7 @@ class SeqFilter():
         '''
         new_seq = ''
         for index, element in enumerate(od_ident):
-            if od == 'order':  # make order seq
+            if od == 'order':  # make order sequence
                 if element == '0':
                     new_seq = new_seq + sequence[index]
                 elif element == 'z':
@@ -71,7 +71,7 @@ class SeqFilter():
                 elif element == '1' or element == 'x':
                     new_seq = new_seq + '*'
 
-            elif od == 'disorder':  # make disorder seq
+            elif od == 'disorder':  # make disorder sequence
                 if element == '1':
                     new_seq = new_seq + sequence[index]
                 elif element == 'x':
@@ -115,14 +115,14 @@ class SeqFilter():
 
     def od_add_alignment(self, path, od_ident):
         '''
-        add the gap to the od_ident from human protein sequence 
-        to ensure that the length between od_ident and homologs sequences from alied fasta file are the same,
+        add the gap to the od_ident by reference to the human protein sequences
+        to ensure that the length between od_ident and homologs sequences from alignment fasta file are the same,
         
-        there are many conditions are considered:
+        there are many conditions to be considered:
             
             nen1: 1---1, both sides of the gaps are 1 (disorder idetified by PONDR)
             nen0: 0---0, both sides of the gaps are 0 (order idetified by PONDR)
-            nenx: x---x, both sides of the gaps are x (order idetified by PONDR, but the length does not satisfy the filter condition from length_filter_by_od_ident())
+            nenx: x---x, both sides of the gaps are x (order    idetified by PONDR, but the length does not satisfy the filter condition from length_filter_by_od_ident())
             nenz: z---z, both sides of the gaps are z (disorder idetified by PONDR, but the length does not satisfy the filter condition from length_filter_by_od_ident())
             een: ---(0, 1, x, z), sequence starting from the gaps, filling 0 (order) ,1 (disorder), x (disorder filtered) or z (order filtered) respectively 
             nee: (0, 1, x, z)---, sequence ending from the gaps, filling 0 (order) ,1(disorder), x (disorder filtered) or z (order filtered) respectively 
@@ -130,7 +130,6 @@ class SeqFilter():
             complicated condition:
             nen01: (0, 1)---(0, 1), different identifier (0 or 1) of both sides of the gaps, we filled 0 (order)
             nenxz: (x, z)---(x, z), different identifier (x or z) of both sides of the gaps, we filled z (order filtered)
-            
             nen1z: (1, z)---(z, 1), both sides of the gaps are disorder, but one side is z, we filled z (disorder filtered)
             nen0x: (0, x)---(x, 0), both sides of the gaps are order, but one side is x, we filled x (order filtered)
 
@@ -145,11 +144,11 @@ class SeqFilter():
         # get alied human sequence
         alied_sequence = seq_data['sequence']
 
-        # raise for different length between OMA and uniprot
+        # raise for different length
         protein_id = seq_data['oma_group_id']
         no_gap_sequence_from_oma = seq_data['remove_gap_sequence']
         if len(od_ident) != len(no_gap_sequence_from_oma):
-            raise Exception("{}, seq length is different between OMA and uniprot".format(protein_id))
+            raise Exception("{}, seq length is different".format(protein_id))
 
         # make new od_ident
         for index, element in enumerate(alied_sequence):
