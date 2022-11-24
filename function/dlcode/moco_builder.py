@@ -1,4 +1,4 @@
-# code from Facebook's Github licensed by CC BY-NC 4.0 with slightly modified
+# code is from Facebook's Github licensed by CC BY-NC 4.0 with slightly modified
 # https://github.com/facebookresearch/moco-v3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
