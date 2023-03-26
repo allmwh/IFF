@@ -24,3 +24,5 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
 RUN pip install --no-cache --upgrade pip && \
     pip install --no-cache notebook jupyterlab && \
     pip install --no-cache -r requirements.txt
+
+RUN git config --global --add safe.directory '*'

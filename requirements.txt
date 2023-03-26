@@ -18,7 +18,7 @@ webdriver-manager==3.8.4
 jellyfish==0.9.0
 py-cpuinfo==9.0.0
 kaleido==0.2.1
-GitPython==3.1.29
+GitPython==3.1.31
 git+https://github.com/luo3300612/Visualizer@d3358cf
 git+https://github.com/katsura-jp/pytorch-cosine-annealing-with-warmup@12d03c0
 
