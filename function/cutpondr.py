@@ -15,6 +15,8 @@ class CutPONDR():
         show_progress_window: show process during PONDR's web crawler
         """
         options = webdriver.ChromeOptions()
+        options.add_argument("--ignore-certificate-errors")
+        options.add_argument("--allow-running-insecure-content")
         if not show_progress_window:
             options.add_argument("--headless")
             options.add_argument("--no-sandbox")
@@ -42,7 +44,7 @@ class CutPONDR():
         self.sequence = sequence
         self.algorithm = algorithm
 
-        base_url = "http://www.pondr.com/"
+        base_url = "https://www.pondr.com/"
         self.driver.get(base_url)
 
         # define bottom control
