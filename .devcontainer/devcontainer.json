@@ -1,11 +1,16 @@
 {
   "name": "IFF Analysis Environment",
-  "image": "allmwh/iff-base:latest",
+  "image": "allmwh/iff-base:2026",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
         "ms-toolsai.jupyter"
+      ]
+    },
+    "codespaces": {
+      "openFiles": [
+        "3_trained_feature_vis.ipynb"
       ]
     }
   }

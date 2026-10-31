@@ -4,4 +4,6 @@ IFF: Identifying key residues in intrinsically disordered regions of proteins us
 ### Run on Binder
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/allmwh/IFF/HEAD?urlpath=lab/tree/feature_vis_on_binder.ipynb)
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/allmwh/IFF)
+
 attention map visualization can be run from the Jupyter Notebook in the GitHub repository using Binder
