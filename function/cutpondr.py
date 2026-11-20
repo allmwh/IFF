@@ -1,121 +1,80 @@
+import re
 import pandas as pd
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import ui as UI
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support import expected_conditions as EC
+import requests
+import urllib3
 
 
 class CutPONDR():
 
+    _ALGORITHM_FIELDS = {
+        "VLXT": "VLXT",
+        "XL1_XT": "XL1",
+        "CAN_XT": "CAN",
+        "VL3-BA": "VL3",
+        "VSL2": "VSL2",
+    }
+
     def __init__(self, show_progress_window=False):
         """
-        automatically send sequences to pondr.com, and get order/disrder region infomation
+        automatically send sequences to pondr.com, and get order/disorder region information
 
-        show_progress_window: show process during PONDR's web crawler
+        show_progress_window: kept for backward compatibility (unused in requests mode)
         """
-        options = webdriver.ChromeOptions()
-        options.add_argument("--ignore-certificate-errors")
-        options.add_argument("--allow-running-insecure-content")
-        if not show_progress_window:
-            options.add_argument("--headless")
-            options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-shm-usage")
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(),
-                                       chrome_options=options)
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        self.session = requests.Session()
 
     def close(self):
-        return self.driver.close()
-
-    def click(self, box, check):
-        if check == 1:
-            if box.is_selected():
-                pass
-            else:
-                box.click()
-        elif check == 0:
-            if box.is_selected():
-                box.click()
-            else:
-                pass
+        return self.session.close()
 
     def cut(self, sequence, protein_name="aa", algorithm="VLXT"):
         self.protein_name = protein_name
         self.sequence = sequence
         self.algorithm = algorithm
 
+        if self.algorithm not in self._ALGORITHM_FIELDS:
+            raise ValueError(
+                f"Unsupported algorithm '{self.algorithm}'. "
+                f"Choose from {list(self._ALGORITHM_FIELDS.keys())}"
+            )
+
         base_url = "https://www.pondr.com/"
-        self.driver.get(base_url)
+        field_name = self._ALGORITHM_FIELDS[self.algorithm]
 
-        # define bottom control
-        # algorithm
-        self.VLXT = self.driver.find_element(By.NAME, "VLXT")
-        self.XL1_XT = self.driver.find_element(By.NAME, "XL1")
-        self.CAN_XT = self.driver.find_element(By.NAME, "CAN")
-        self.VL3_BA = self.driver.find_element(By.NAME, "VL3")
-        self.VSL2 = self.driver.find_element(By.NAME, "VSL2")
-
-        # output
-        self.gra = self.driver.find_element(By.NAME, "graphic")
-        self.stat = self.driver.find_element(By.NAME, "stats")
-        self.report = self.driver.find_element(By.NAME, "seq")
-        self.rawoutput = self.driver.find_element(By.NAME, "wcwraw")
-
-        # switcher
-        switcher = {
-            "VLXT": lambda: self.click(self.VLXT, 1),
-            "XL1_XT": lambda: self.click(self.XL1_XT, 1),
-            "CAN_XT": lambda: self.click(self.CAN_XT, 1),
-            "VL3-BA": lambda: self.click(self.VL3_BA, 1),
-            "VSL2": lambda: self.click(self.VSL2, 1),
+        files = {
+            field_name: (None, "on"),
+            "ProteinName": (None, self.protein_name),
+            "AccessionCode": (None, ""),
+            "Sequence": (None, self.sequence),
+            "wcwraw": (None, "on"),
+            "submit_result": (None, "Submit Query"),
         }
 
-        # click bottom
-        self.click(self.VLXT, 0)
-        self.click(self.VSL2, 0)
-        self.click(self.gra, 0)
-        self.click(self.stat, 0)
-        self.click(self.report, 0)
-        self.click(self.rawoutput, 1)
-        switcher[self.algorithm]()
+        response = self.session.post(base_url, files=files, verify=False, timeout=60)
+        response.raise_for_status()
 
-        # fill protein name
-        name = self.driver.find_element(By.NAME, "ProteinName")
-        name.clear()
-        name.send_keys(self.protein_name)
+        pre_blocks = re.findall(r"<pre>(.*?)</pre>", response.text, re.DOTALL | re.IGNORECASE)
+        raw_block = None
+        for block in reversed(pre_blocks):
+            stripped = block.strip()
+            if stripped.startswith("Num"):
+                raw_block = stripped
+                break
 
-        # fill sequence
-        seqform = self.driver.find_element(By.NAME, "Sequence")
-        seqform.clear()
-        seqform.send_keys(self.sequence)
+        if raw_block is None:
+            raise RuntimeError("Failed to parse PONDR raw output from response.")
 
-        # submit
-        self.submit = self.driver.find_element(By.NAME, "submit_result")
-        self.submit.click()
-
-        # wait until loaded
-        UI.WebDriverWait(self.driver, 2).until(
-            EC.presence_of_element_located(
-                (By.XPATH, "/html/body/center/h2/img")))
-
-        # raw output
-        # result analysis
-        result = self.driver.find_element(By.XPATH, "/html/body/pre[6]")
-        result = result.text
-        self.result = result
-        df = pd.DataFrame(result.split("\n"))
-        df = pd.DataFrame(df[0].str.split(pat=" ", n=2).tolist(),
-                          columns=["Num", "Res", "algorithm"])
-        df = df.drop(0)
+        self.result = raw_block
+        lines = [line.strip() for line in raw_block.splitlines() if line.strip()]
+        rows = [line.split() for line in lines[1:]]
+        df = pd.DataFrame(rows, columns=["Num", "Res", "algorithm"])
 
         # make sequence_mask
-        thershold = 0.5
+        threshold = 0.5
         sequence_mask = ""
-        for index, row in df.iterrows():
-            order = int(row[0])
-            num = float(row[2])
+        for _, row in df.iterrows():
+            num = float(row["algorithm"])
 
-            if num >= thershold:
+            if num >= threshold:
                 sequence_mask = sequence_mask + "."
             else:
                 sequence_mask = sequence_mask + "*"

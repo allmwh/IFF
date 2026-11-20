@@ -18,10 +18,8 @@ WORKDIR ${HOME}
 #COPY . ${HOME}
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends git wget clustalo ca-certificates && \
-    wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb && \
-    rm -rf google-chrome-stable_current_amd64.deb /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends git clustalo ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV PATH="${HOME}/.venv/bin:$PATH"
 
